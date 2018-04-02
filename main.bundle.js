@@ -80,6 +80,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var $ = __webpack_require__(7);
 
+$(document).ready(function () {
+  getTopColor();
+  getSwatches();
+});
+
+$('textarea').on('keypress', function (e) {
+  e.preventDefault();
+  $('button').click();
+});
+
 var getTopColor = function getTopColor() {
   fetch("https://color-swatch-api.herokuapp.com/api/v1/top_color").then(function (response) {
     return response.json();
@@ -95,7 +105,44 @@ var appendColor = function appendColor(topColor) {
   $('.top-color').append('' + colorName);
 };
 
-getTopColor();
+var getSwatches = function getSwatches() {
+  $('button').on('click', function () {
+    var text = $('textarea').val().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim().split(' ');
+    var uniqueWords = text.filter(function (word, i, array) {
+      return array.indexOf(word) === i;
+    });
+    var dataColors = Object.keys(_colors2.default);
+    for (var i = 0; i < uniqueWords.length; i++) {
+      var color = uniqueWords[i];
+      if (dataColors.includes(color)) {
+        $('article.colorized-text').append('<div class="swatch" style="background-color:' + _colors2.default[color] + ';"></div>');
+      }
+    }
+    getColors(text, dataColors);
+  });
+};
+
+var getColors = function getColors(text, dataColors) {
+  var anyColor = [];
+  text.forEach(function (word) {
+    if (dataColors.includes(word)) {
+      anyColor.push(word);
+    }
+    return anyColor;
+  });
+  postColor(anyColor);
+};
+
+var postColor = function postColor(colorsArray) {
+  colorsArray.forEach(function (color) {
+    fetch("https://color-swatch-api.herokuapp.com/api/v1/colors", { method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        color: { value: color }
+      })
+    });
+  });
+};
 
 /***/ }),
 /* 1 */
