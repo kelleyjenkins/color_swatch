@@ -102,7 +102,8 @@ var getTopColor = function getTopColor() {
 
 var appendColor = function appendColor(topColor) {
   var colorName = topColor.value;
-  $('.top-color').append('' + colorName);
+  var colorCount = topColor.color_count;
+  $('.top-color').append(colorName + ': ' + colorCount);
 };
 
 var getSwatches = function getSwatches() {
